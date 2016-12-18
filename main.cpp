@@ -11,21 +11,21 @@ class Vertex {
 
 public:
     int id;
-    vector<Vertex*> edges_out;
+    vector<Vertex *> edges_out;
 
     Vertex(int id) : id(id) {};
 
-    bool operator <( const Vertex &rhs ) const { return ( id < rhs.id ); }
+    bool operator<(const Vertex &rhs) const { return (id < rhs.id); }
 };
 
 map<int, Vertex> graph;
-map<Vertex*, int> BC;
+map<Vertex *, int> BC;
 
 bool vertex_exists(int id) {
     return graph.find(id) != graph.end();
 }
 
-Vertex* get_vertex(int id) {
+Vertex *get_vertex(int id) {
     auto it = graph.find(id);
     if (it == graph.end())
         return nullptr;
@@ -50,19 +50,20 @@ void read() {
         if (s.empty())
             break;
         istringstream line(s);
-        line >> v1; line >> v2;
+        line >> v1;
+        line >> v2;
         connect(v1, v2);
     }
 }
 
 void output() {
-    for(auto &kv : BC) {
+    for (auto &kv : BC) {
         if (kv.first->edges_out.size() > 0)
             printf("%d %d\n", kv.first->id, kv.second);
     }
 }
 
-void brandes_helper(Vertex *s, vector<Vertex*> *vertexes) {
+void brandes_helper(Vertex *s, vector<Vertex *> *vertexes) {
     // BC: pośrednictwo;
     // V: wierzchołki;
     // d[w] odległość do wierzchołka w;
@@ -76,7 +77,7 @@ void brandes_helper(Vertex *s, vector<Vertex*> *vertexes) {
     map<Vertex *, int> d;
     map<Vertex *, int> delta;
 
-    for (Vertex* w : *vertexes) {
+    for (Vertex *w : *vertexes) {
         sigma[w] = 0;
         d[w] = -1;
         delta[w] = 0;
@@ -94,7 +95,7 @@ void brandes_helper(Vertex *s, vector<Vertex*> *vertexes) {
         Q.pop();
         S.push(v);
 
-        for (Vertex* w : v->edges_out) {
+        for (Vertex *w : v->edges_out) {
             if (d[w] < 0) {
                 Q.push(w);
                 d[w] = d[v] + 1;
@@ -117,14 +118,14 @@ void brandes_helper(Vertex *s, vector<Vertex*> *vertexes) {
 }
 
 void brandes() {
-    vector<Vertex*> V;
+    vector<Vertex *> V;
 
-    for(auto &kv : graph) {
+    for (auto &kv : graph) {
         BC[&kv.second] = 0;
         V.push_back(&kv.second);
     }
 
-    for(auto &kv : graph) {
+    for (auto &kv : graph) {
         brandes_helper(&kv.second, &V);
     }
 }
