@@ -4,6 +4,8 @@
 #include <map>
 #include <queue>
 #include <sstream>
+#include <mutex>
+#include <thread>
 
 using namespace std;
 
@@ -18,8 +20,35 @@ public:
     bool operator<(const Vertex &rhs) const { return (id < rhs.id); }
 };
 
+
+class BetweennessCentrality {
+
+    map<Vertex *, int> counter;
+    mutex m;
+
+public:
+
+    void output() {
+        for (auto &kv : counter) {
+            if (kv.first->edges_out.size() > 0)
+                printf("%d %d\n", kv.first->id, kv.second);
+        }
+    }
+
+    void increment(Vertex* v, int value) {
+        lock_guard<mutex> guard(m);
+        counter[v] += value;
+    }
+
+    void initialize(vector<Vertex*> vertexes) {
+        for (Vertex* v : vertexes)
+            counter[v] = 0;
+    };
+
+};
+
 map<int, Vertex> graph;
-map<Vertex *, int> BC;
+BetweennessCentrality bc;
 
 bool vertex_exists(int id) {
     return graph.find(id) != graph.end();
@@ -37,7 +66,6 @@ void connect(int v1, int v2) {
         graph.insert(pair<int, Vertex>(v1, Vertex(v1)));
     if (!vertex_exists(v2))
         graph.insert(pair<int, Vertex>(v2, Vertex(v2)));
-
     auto v = &graph.find(v1)->second;
     auto w = get_vertex(v2);
     v->edges_out.push_back(w);
@@ -56,14 +84,7 @@ void read() {
     }
 }
 
-void output() {
-    for (auto &kv : BC) {
-        if (kv.first->edges_out.size() > 0)
-            printf("%d %d\n", kv.first->id, kv.second);
-    }
-}
-
-void brandes_helper(Vertex *s, vector<Vertex *> *vertexes) {
+void brandes_vertex(Vertex *s, vector<Vertex *> *vertexes) {
     // BC: pośrednictwo;
     // V: wierzchołki;
     // d[w] odległość do wierzchołka w;
@@ -113,27 +134,29 @@ void brandes_helper(Vertex *s, vector<Vertex *> *vertexes) {
         for (Vertex *p : previous[v])
             delta[p] += (sigma[p] / sigma[v]) * (1 + delta[v]);
         if (v != s)
-            BC[v] += delta[v];
+            bc.increment(v, delta[v]);
     }
 }
 
 void brandes() {
     vector<Vertex *> V;
-
-    for (auto &kv : graph) {
-        BC[&kv.second] = 0;
+    for (auto &kv : graph)
         V.push_back(&kv.second);
-    }
+    bc.initialize(V);
 
-    for (auto &kv : graph) {
-        brandes_helper(&kv.second, &V);
-    }
+    thread threads[V.size()];
+    int j = 0;
+    for (auto v : V)
+        threads[j++] = thread(brandes_vertex, v, &V);
+
+    for (int i = 0; i < V.size(); i++)
+        threads[i].join();
 }
 
 int main() {
     read();
     brandes();
-    output();
+    bc.output();
     return 0;
 }
 
