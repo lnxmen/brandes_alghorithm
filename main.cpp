@@ -6,8 +6,6 @@
 #include <sstream>
 #include <mutex>
 #include <thread>
-#include <future>
-#include <bits/stl_list.h>
 
 using namespace std;
 
@@ -37,13 +35,13 @@ public:
         }
     }
 
-    void increment(Vertex *v, int value) {
+    void increment(Vertex* v, int value) {
         lock_guard<mutex> guard(m);
         counter[v] += value;
     }
 
-    void initialize(vector<Vertex *> vertexes) {
-        for (Vertex *v : vertexes)
+    void initialize(vector<Vertex*> vertexes) {
+        for (Vertex* v : vertexes)
             counter[v] = 0;
     };
 
@@ -86,7 +84,7 @@ void read() {
     }
 }
 
-void brandes_vertex(Vertex *s, const vector<Vertex *> *vertexes) {
+void brandes_vertex(Vertex *s, vector<Vertex *> *vertexes) {
     stack<Vertex *> S;
     map<Vertex *, std::vector<Vertex *>> previous_vertexes;
     map<Vertex *, int> shortest_paths_counter;
@@ -139,13 +137,13 @@ void brandes() {
         V.push_back(&kv.second);
     bc.initialize(V);
 
-    vector<future<void>> futures;
-
+    thread threads[V.size()];
+    int j = 0;
     for (auto v : V)
-        futures.push_back(async(brandes_vertex, v, &V));
+        threads[j++] = thread(brandes_vertex, v, &V);
 
-    for (auto &future : futures)
-        future.wait();
+    for (int i = 0; i < V.size(); i++)
+        threads[i].join();
 }
 
 int main() {
