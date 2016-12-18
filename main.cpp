@@ -15,7 +15,7 @@ public:
 
     Vertex(int id) : id(id) {};
 
-    bool operator <( const Vertex &rhs ) const { return ( edges_out.size() < rhs.edges_out.size() ); }
+    bool operator <( const Vertex &rhs ) const { return ( id < rhs.id ); }
 };
 
 map<int, Vertex> graph;
