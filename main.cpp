@@ -85,27 +85,20 @@ void read() {
 }
 
 void brandes_vertex(Vertex *s, vector<Vertex *> *vertexes) {
-    // BC: pośrednictwo;
-    // V: wierzchołki;
-    // d[w] odległość do wierzchołka w;
-    // sigma[w] liczba najkrótszych ścieżek do wierzchołka w;
-    // previous[w] poprzednicy wierzchołka w na wszystkich najkrótszych ścieżkach;
-    // delta[v] wartość pośrednictwa dla v w ścieżkach startujących z s.
-
     stack<Vertex *> S;
-    map<Vertex *, std::vector<Vertex *>> previous;
-    map<Vertex *, int> sigma;
-    map<Vertex *, int> d;
-    map<Vertex *, int> delta;
+    map<Vertex *, std::vector<Vertex *>> previous_vertexes;
+    map<Vertex *, int> shortest_paths_counter;
+    map<Vertex *, int> distance;
+    map<Vertex *, int> betweenness;
 
     for (Vertex *w : *vertexes) {
-        sigma[w] = 0;
-        d[w] = -1;
-        delta[w] = 0;
+        shortest_paths_counter[w] = 0;
+        distance[w] = -1;
+        betweenness[w] = 0;
     }
 
-    sigma[s] = 1;
-    d[s] = 0;
+    shortest_paths_counter[s] = 1;
+    distance[s] = 0;
 
     queue<Vertex *> Q;
     Q.push(s);
@@ -117,13 +110,13 @@ void brandes_vertex(Vertex *s, vector<Vertex *> *vertexes) {
         S.push(v);
 
         for (Vertex *w : v->edges_out) {
-            if (d[w] < 0) {
+            if (distance[w] < 0) {
                 Q.push(w);
-                d[w] = d[v] + 1;
+                distance[w] = distance[v] + 1;
             }
-            if (d[w] == d[v] + 1) {
-                sigma[w] += sigma[v];
-                previous[w].push_back(v);
+            if (distance[w] == distance[v] + 1) {
+                shortest_paths_counter[w] += shortest_paths_counter[v];
+                previous_vertexes[w].push_back(v);
             }
         }
     }
@@ -131,10 +124,10 @@ void brandes_vertex(Vertex *s, vector<Vertex *> *vertexes) {
     while (!S.empty()) {
         v = S.top();
         S.pop();
-        for (Vertex *p : previous[v])
-            delta[p] += (sigma[p] / sigma[v]) * (1 + delta[v]);
+        for (Vertex *p : previous_vertexes[v])
+            betweenness[p] += (shortest_paths_counter[p] / shortest_paths_counter[v]) * (1 + betweenness[v]);
         if (v != s)
-            bc.increment(v, delta[v]);
+            bc.increment(v, betweenness[v]);
     }
 }
 
