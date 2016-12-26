@@ -23,7 +23,7 @@ public:
 
 class BetweennessCentrality {
 
-    map<Vertex *, int> counter;
+    map<Vertex *, double> counter;
     mutex m;
 
 public:
@@ -31,11 +31,11 @@ public:
     void output() {
         for (auto &kv : counter) {
             if (kv.first->edges_out.size() > 0)
-                printf("%d %d\n", kv.first->id, kv.second);
+                printf("%d %.0f\n", kv.first->id, kv.second);
         }
     }
 
-    void increment(Vertex* v, int value) {
+    void increment(Vertex* v, double value) {
         lock_guard<mutex> guard(m);
         counter[v] += value;
     }
@@ -87,9 +87,9 @@ void read() {
 void brandes_vertex(Vertex *s, vector<Vertex *> *vertexes) {
     stack<Vertex *> S;
     map<Vertex *, std::vector<Vertex *>> previous_vertexes;
-    map<Vertex *, int> shortest_paths_counter;
-    map<Vertex *, int> distance;
-    map<Vertex *, int> betweenness;
+    map<Vertex *, double> shortest_paths_counter;
+    map<Vertex *, double> distance;
+    map<Vertex *, double> betweenness;
 
     for (Vertex *w : *vertexes) {
         shortest_paths_counter[w] = 0;
@@ -122,8 +122,7 @@ void brandes_vertex(Vertex *s, vector<Vertex *> *vertexes) {
     }
 
     while (!S.empty()) {
-        v = S.top();
-        S.pop();
+        v = S.top(); S.pop();
         for (Vertex *p : previous_vertexes[v])
             betweenness[p] += (shortest_paths_counter[p] / shortest_paths_counter[v]) * (1 + betweenness[v]);
         if (v != s)
@@ -137,13 +136,8 @@ void brandes() {
         V.push_back(&kv.second);
     bc.initialize(V);
 
-    thread threads[V.size()];
-    int j = 0;
     for (auto v : V)
-        threads[j++] = thread(brandes_vertex, v, &V);
-
-    for (int i = 0; i < V.size(); i++)
-        threads[i].join();
+        brandes_vertex(v, &V);
 }
 
 int main() {
