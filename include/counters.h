@@ -23,10 +23,10 @@ public:
 
 };
 
-template
+template // with synchronization
 class Counters<int, double, true>;
 
-template
+template // without synchronization
 class Counters<int, double, false>;
 
 #endif //BRANDES_COUNTERS_H

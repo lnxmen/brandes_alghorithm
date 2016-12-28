@@ -75,7 +75,7 @@ void Brandes<T>::compute(T s, Counters<T, counterType, false> *counters) {
         v = S.top();
         S.pop();
         for (T p : previous_vertexes[v])
-            betweenness[p] += (shortest_paths_counter[p] / shortest_paths_counter[v]) * (1 + betweenness[v]);
+            betweenness[p] += (counterType(shortest_paths_counter[p]) / shortest_paths_counter[v]) * (1.0 + betweenness[v]);
         if (v != s)
             counters->increment(v, betweenness[v]);
     }
