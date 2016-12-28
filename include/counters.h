@@ -1,13 +1,13 @@
 #ifndef BRANDES_COUNTERS_H
 #define BRANDES_COUNTERS_H
 
-#include <map>
+#include <unordered_map>
 #include <mutex>
 #include "graph.h"
 
 template<typename K, typename T, bool synchronized>
 class Counters {
-    std::map<K, T> counters;
+    std::unordered_map<K, T> counters;
     std::mutex m;
 
 public:
@@ -16,9 +16,9 @@ public:
 
     void increment(K k, T value);
 
-    void batch_increment(std::map<K, T> &values);
+    void batch_increment(std::unordered_map<K, T> &values);
 
-    std::map<K, T> &get_counters();
+    std::unordered_map<K, T> &get_counters();
 };
 
 template // with synchronization

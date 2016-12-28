@@ -86,8 +86,8 @@ void Brandes<T, C>::compute(T s, Counters<T, C, false> *counters) {
 }
 
 template<typename T, typename C>
-std::map<T, C> Brandes<T, C>::get_result() {
-    std::map<T, C> counters = counters_.get_counters();
+std::unordered_map<T, C> Brandes<T, C>::get_result() {
+    std::unordered_map<T, C> counters = counters_.get_counters();
     for (auto &kv : *graph_.get_vertexes()) {
         if (!kv.second.has_edges())
             counters.erase(kv.first);

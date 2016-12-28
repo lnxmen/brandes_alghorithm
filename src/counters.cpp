@@ -19,7 +19,7 @@ void Counters<K, T, synchronized>::increment(K v, T value) {
 }
 
 template<typename K, typename T, bool synchronized>
-void Counters<K, T, synchronized>::batch_increment(std::map<K, T> &values) {
+void Counters<K, T, synchronized>::batch_increment(std::unordered_map<K, T> &values) {
     if (synchronized)
         std::lock_guard<std::mutex> lock(m);
     for (auto &kv : values)
@@ -27,7 +27,7 @@ void Counters<K, T, synchronized>::batch_increment(std::map<K, T> &values) {
 }
 
 template<typename K, typename T, bool synchronized>
-std::map<K, T> &Counters<K, T, synchronized>::get_counters() {
+std::unordered_map<K, T> &Counters<K, T, synchronized>::get_counters() {
     if (synchronized)
         std::lock_guard<std::mutex> lock(m);
     return counters;
