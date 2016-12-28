@@ -90,6 +90,5 @@ std::map<T, C> Brandes<T, C>::get_result() {
         if (kv.second.has_edges())
             result[kv.first] = counters[kv.first];
     }
-
     return result;
 }
