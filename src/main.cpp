@@ -18,6 +18,7 @@ void read(char input_filename[], Graph<T> *graph) {
         line >> v2;
         graph->connect(v1, v2);
     }
+    input_file.close();
 }
 
 int main(int argc, char *argv[]) {
