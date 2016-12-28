@@ -7,11 +7,11 @@
 
 template<typename T, typename C>
 void Brandes<T, C>::run(int threads_number) {
+    if (threads_number < 1)
+        throw std::invalid_argument("threads number must be positive");
     std::vector<std::thread> threads;
-
     for (size_t i = 0; i < threads_number; i++)
         threads.push_back(std::thread([this] { run_worker(); }));
-
     for (auto &thread : threads)
         thread.join();
 }
@@ -20,7 +20,6 @@ template<typename T, typename C>
 void Brandes<T, C>::run_worker() {
     T *id = manager_.take_job();
     Counters<T, C, false> counters_t;
-
     while (id != nullptr) {
         // compute increments for current vertex
         compute(*id, &counters_t);

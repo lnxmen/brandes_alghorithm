@@ -4,13 +4,10 @@
 #include "brandes.h"
 
 template<typename T>
-void read(char input_filename[], Graph<T> *graph) {
-    std::ifstream input_file;
-    input_file.open(input_filename);
-
+void read(std::ifstream &input, Graph<T> *graph) {
     T v1, v2;
     std::string s;
-    while (getline(input_file, s)) {
+    while (getline(input, s)) {
         if (s.empty())
             break;
         std::istringstream line(s);
@@ -18,7 +15,6 @@ void read(char input_filename[], Graph<T> *graph) {
         line >> v2;
         graph->connect(v1, v2);
     }
-    input_file.close();
 }
 
 int main(int argc, char *argv[]) {
@@ -29,14 +25,20 @@ int main(int argc, char *argv[]) {
     }
 
     Graph<int> graph;
-    read(argv[2], &graph);
+
+    std::ifstream in_file;
+    in_file.open(argv[2]);
+    read(in_file, &graph);
+    in_file.close();
 
     Brandes<int, double> brandes(graph);
-    brandes.run(2);
+    brandes.run(std::stoi(argv[1]));
 
-    for (auto &kv : brandes.get_result()) {
-        std::cout << kv.first << " " << kv.second << std::endl;
-    }
+    std::ofstream out_file;
+    out_file.open(argv[3]);
+    for (auto &kv : brandes.get_result())
+        out_file << kv.first << " " << kv.second << std::endl;
+    out_file.close();
 
     return 0;
 }
