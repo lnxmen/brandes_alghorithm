@@ -12,10 +12,12 @@ class Manager {
 
 public:
 
-    void add_jobs(const std::vector<T> &graph);
+    void add_jobs(Graph<T> &graph);
+
     T *take_job();
 };
 
-template class Manager<int>;
+template
+class Manager<int>;
 
 #endif //BRANDES_MANAGER_H

@@ -13,15 +13,20 @@ class Counters {
 
 public:
 
-    Counters(const std::vector<K> &keys) {
-        for (K k : keys)
-            counters[k] = 0;
-    }
+    void initialize_values(Graph<K> &graph);
 
     void increment(K k, T value);
+
     void batch_increment(std::map<K, T> &values);
-    const std::map<K, T> &get_counters();
+
+    std::map<K, T> &get_counters();
 
 };
+
+template
+class Counters<int, double, true>;
+
+template
+class Counters<int, double, false>;
 
 #endif //BRANDES_COUNTERS_H

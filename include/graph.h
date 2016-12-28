@@ -7,15 +7,17 @@
 template<typename T>
 class Vertex {
     T id_;
-    std::vector<Vertex<T>*> edges_;
+    std::vector<T> edges_;
 
 public:
 
     Vertex(T id) : id_(id) {}
 
-    void add_edge(Vertex<T>* v) { edges_.push_back(v); }
-    const std::vector<Vertex<T>*> get_edges() { return edges_; }
-    const T get_id() { return id_; }
+    void add_edge(Vertex<T> *v) { edges_.push_back(v->id_); }
+
+    std::vector<T> get_edges() { return edges_; }
+
+    T get_id() { return id_; }
 };
 
 
@@ -26,15 +28,20 @@ class Graph {
 
 public:
 
-    void connect(T v1, T v2);
     Vertex<T> *get_vertex(T v);
 
     void add_vertex(T v);
+
+    void connect(T v1, T v2);
+
+    std::vector<T> *get_vertexes_ids() { return &vertices_ids; };
+
+    std::map<T, Vertex<T>> *get_vertexes() { return &vertices; };
+
     bool vertex_exists(T v) { return vertices.find(v) != vertices.end(); }
-    const std::vector<T> &get_vertexes_ids() { return vertices_ids; };
-    const std::map<T, Vertex<T>> &get_vertexes() { return vertices; };
 };
 
-template class Graph<int>;
+template
+class Graph<int>;
 
 #endif //BRANDES_GRAPH_H
