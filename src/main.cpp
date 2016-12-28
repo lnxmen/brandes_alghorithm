@@ -2,7 +2,6 @@
 #include <sstream>
 #include <fstream>
 #include "brandes.h"
-#include "graph.h"
 
 template<typename T>
 void read(char input_filename[], Graph<T> *graph) {
@@ -33,8 +32,11 @@ int main(int argc, char *argv[]) {
 
     Brandes<int> brandes(graph);
     brandes.run(2);
-//
-//    brandes.output();
+
+    for (auto &kv : brandes.get_result()) {
+        std::cout << kv.first << " " << kv.second << std::endl;
+    }
+
     return 0;
 }
 

@@ -23,6 +23,8 @@ public:
         counters_.initialize_values(graph_);
     }
 
+    std::map<T, counterType> &get_result() { return counters_.get_counters(); }
+
     void run(int threads);
 
 private:
