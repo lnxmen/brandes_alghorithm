@@ -5,8 +5,8 @@
 #include "graph.h"
 #include "brandes.h"
 
-template<typename T>
-void Brandes<T>::run(int threads_number) {
+template<typename T, typename C>
+void Brandes<T, C>::run(int threads_number) {
     std::vector<std::thread> threads;
 
     for (size_t i = 0; i < threads_number; i++)
@@ -16,10 +16,10 @@ void Brandes<T>::run(int threads_number) {
         thread.join();
 }
 
-template<typename T>
-void Brandes<T>::run_worker() {
+template<typename T, typename C>
+void Brandes<T, C>::run_worker() {
     T *id = manager_.take_job();
-    Counters<T, counterType, false> counters_t;
+    Counters<T, C, false> counters_t;
 
     while (id != nullptr) {
         // compute increments for current vertex
@@ -33,8 +33,8 @@ void Brandes<T>::run_worker() {
     }
 }
 
-template<typename T>
-void Brandes<T>::compute(T s, Counters<T, counterType, false> *counters) {
+template<typename T, typename C>
+void Brandes<T, C>::compute(T s, Counters<T, C, false> *counters) {
     std::stack<T> S;
     std::unordered_map<T, std::vector<T>> previous_vertexes;
     std::unordered_map<T, int> shortest_paths_counter;
@@ -75,9 +75,21 @@ void Brandes<T>::compute(T s, Counters<T, counterType, false> *counters) {
         v = S.top();
         S.pop();
         for (T p : previous_vertexes[v])
-            betweenness[p] += (counterType(shortest_paths_counter[p]) / shortest_paths_counter[v]) * (1.0 + betweenness[v]);
+            betweenness[p] += (C(shortest_paths_counter[p]) / shortest_paths_counter[v]) * (1.0 + betweenness[v]);
         if (v != s)
             counters->increment(v, betweenness[v]);
     }
 
+}
+
+template<typename T, typename C>
+std::map<T, C> Brandes<T, C>::get_result() {
+    std::map<T, C> result;
+    std::map<T, C> counters = counters_.get_counters();
+    for (auto &kv : *graph_.get_vertexes()) {
+        if (kv.second.has_edges())
+            result[kv.first] = counters[kv.first];
+    }
+
+    return result;
 }

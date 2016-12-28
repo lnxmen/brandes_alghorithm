@@ -7,14 +7,12 @@
 #include "manager.h"
 #include "counters.h"
 
-template<typename T>
+template<typename T, typename C>
 class Brandes {
-
-    using counterType = double;
 
     Graph<T> &graph_;
     Manager<T> manager_;
-    Counters<T, counterType, true> counters_;
+    Counters<T, C, true> counters_;
 
 public:
 
@@ -23,7 +21,7 @@ public:
         counters_.initialize_values(graph_);
     }
 
-    std::map<T, counterType> &get_result() { return counters_.get_counters(); }
+    std::map<T, C> get_result();
 
     void run(int threads);
 
@@ -31,11 +29,11 @@ private:
 
     void run_worker();
 
-    void compute(T s, Counters<T, counterType, false> *counters);
+    void compute(T s, Counters<T, C, false> *counters);
 
 };
 
 template
-class Brandes<int>;
+class Brandes<int, double>;
 
 #endif //BRANDES_BRANDES_H

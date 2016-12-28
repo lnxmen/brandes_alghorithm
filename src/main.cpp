@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
     Graph<int> graph;
     read(argv[2], &graph);
 
-    Brandes<int> brandes(graph);
+    Brandes<int, double> brandes(graph);
     brandes.run(2);
 
     for (auto &kv : brandes.get_result()) {

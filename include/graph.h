@@ -17,6 +17,8 @@ public:
 
     std::vector<T> get_edges() { return edges_; }
 
+    bool has_edges() { return !edges_.empty(); }
+
     T get_id() { return id_; }
 };
 

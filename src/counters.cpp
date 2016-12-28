@@ -1,5 +1,4 @@
 #include <mutex>
-#include <iostream>
 #include "graph.h"
 #include "counters.h"
 
