@@ -1,12 +1,12 @@
-# Optymalizacje:
+# Optimizations:
 ## 1.0 https://github.com/lnxmen/brandes_alghorithm/tree/1.0
-Pierwsza działająca wersja.
+First fully working code version.
 - 2 - 3m 41.62s
 - 4 - 1m 56.61s
 - 8 - 1m 29.05s
 
 ## 1.1 https://github.com/lnxmen/brandes_alghorithm/tree/1.1
-Zmiana: trzymanie wyników dla węzła w unordered_map zamiast map.
+Change: keep final (and temporary for single vertex computation) result counters in unordered_map instead of map.
 - 2 - 2m 49.14s
 - 4 - 1m 43.60s
 - 8 - 1m 17.46s
