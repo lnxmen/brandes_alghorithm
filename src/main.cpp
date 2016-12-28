@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
     if (argc != 4) {
         std::cerr << "Error: invalid arguments." << std::endl;
         std::cout << "Example: ./brandes threads-number input-file output-file." << std::endl;
-        return -1;
+        return 1;
     }
 
     Graph<int> graph;

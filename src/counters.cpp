@@ -2,7 +2,6 @@
 #include "graph.h"
 #include "counters.h"
 
-
 template<typename K, typename T, bool synchronized>
 void Counters<K, T, synchronized>::initialize_values(Graph<K> &graph) {
     if (synchronized)
