@@ -20,7 +20,7 @@ public:
         counters_.initialize_values(graph_);
     }
 
-    std::unordered_map<T, C> get_result();
+    std::map<T, C> get_result();
 
     void run(int threads);
 
