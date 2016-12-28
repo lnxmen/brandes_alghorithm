@@ -7,9 +7,9 @@ First fully working code version.
 
 ## 1.1 https://github.com/lnxmen/brandes_alghorithm/tree/1.1
 Change: keep final (and temporary for single vertex computation) result counters in unordered_map instead of map.
-- 2 - 2m 49.14s
-- 4 - 1m 43.60s
-- 8 - 1m 17.46s
+- 2 - 2m 54.36s
+- 4 - 1m 43.78s
+- 8 - 1m 15.94s
 
 ### Used CPU:
 ```
