@@ -10,25 +10,29 @@ void Brandes<T, C>::run(int threads_number) {
     if (threads_number < 1)
         throw std::invalid_argument("threads number must be positive");
     std::vector<std::thread> threads;
+
+    // run workers
     for (size_t i = 0; i < threads_number; i++)
         threads.push_back(std::thread([this] { run_worker(); }));
+
+    // wait for workers to end their jobs
     for (auto &thread : threads)
         thread.join();
 }
 
 template<typename T, typename C>
 void Brandes<T, C>::run_worker() {
-    T *id = manager_.take_job();
+    T *v = manager_.take_job();
     Counters<T, C, false> counters_t;
-    while (id != nullptr) {
+    while (v != nullptr) {
         // compute increments for current vertex
-        compute(*id, &counters_t);
+        compute(*v, &counters_t);
         // update global counters
         counters_.batch_increment(counters_t.get_counters());
         // clear local counters
         counters_t.initialize_values(graph_);
         // get next job (vertex)
-        id = manager_.take_job();
+        v = manager_.take_job();
     }
 }
 

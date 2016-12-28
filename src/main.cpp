@@ -7,6 +7,7 @@ template<typename T>
 void read(std::ifstream &input, Graph<T> *graph) {
     T v1, v2;
     std::string s;
+
     while (getline(input, s)) {
         if (s.empty())
             break;

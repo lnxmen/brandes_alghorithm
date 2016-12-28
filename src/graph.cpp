@@ -12,6 +12,7 @@ void Graph<T>::connect(T v1, T v2) {
         add_vertex(v1);
     if (!vertex_exists(v2))
         add_vertex(v2);
+
     auto v = &vertices.find(v1)->second;
     auto w = get_vertex(v2);
     v->add_edge(w);

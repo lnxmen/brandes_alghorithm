@@ -7,7 +7,6 @@
 
 template<typename K, typename T, bool synchronized>
 class Counters {
-
     std::map<K, T> counters;
     std::mutex m;
 
@@ -20,7 +19,6 @@ public:
     void batch_increment(std::map<K, T> &values);
 
     std::map<K, T> &get_counters();
-
 };
 
 template // with synchronization

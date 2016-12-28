@@ -9,10 +9,9 @@
 
 template<typename T, typename C>
 class Brandes {
-
     Graph<T> &graph_;
-    Manager<T> manager_;
-    Counters<T, C, true> counters_;
+    Manager<T> manager_; // Manager gives workers vertices to compute
+    Counters<T, C, true> counters_; // Synchronized counters for each vertex
 
 public:
 
@@ -30,7 +29,6 @@ private:
     void run_worker();
 
     void compute(T s, Counters<T, C, false> *counters);
-
 };
 
 template
