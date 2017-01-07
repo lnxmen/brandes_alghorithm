@@ -14,7 +14,7 @@ public:
 
     void add_jobs(Graph<T> &graph);
 
-    T *take_job();
+    T take_job();
 };
 
 template

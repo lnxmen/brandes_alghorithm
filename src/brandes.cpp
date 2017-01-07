@@ -24,13 +24,13 @@ void Brandes<T, C>::run(int threads_number) {
 
 template<typename T, typename C>
 void Brandes<T, C>::run_worker() {
-    IDType *v = manager_.take_job();
+    IDType v = manager_.take_job();
     Counters<T, C, false> counters_t;
-    while (v != nullptr) {
+    while (v > -1) {
         // initialize counters
         counters_t.initialize_values(graph_);
         // compute increments for current vertex
-        compute(*v, &counters_t);
+        compute(v, &counters_t);
         // update global counters
         counters_.batch_increment(counters_t.get_counters());
         // get next job (vertex)
@@ -64,7 +64,8 @@ void Brandes<T, C>::compute(IDType vertex_id, Counters<T, C, false> *counters) {
         v = Q.front(); Q.pop();
         S.push(v);
 
-        for (IDType w : *graph_.get_vertex(v)->get_edges()) {
+        Vertex *a = graph_.get_vertex(v);
+        for (IDType w : *a->get_edges()) {
             if (d[w] < 0) {
                 Q.push(w);
                 d[w] = d[v] + 1;
@@ -83,7 +84,6 @@ void Brandes<T, C>::compute(IDType vertex_id, Counters<T, C, false> *counters) {
         if (v != vertex_id)
             counters->increment(v, delta[v]);
     }
-
 }
 
 template<typename T, typename C>

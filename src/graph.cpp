@@ -31,8 +31,7 @@ void Graph<T>::connect(T v1, T v2) {
 
 template<typename T>
 Vertex *Graph<T>::get_vertex(IDType v) {
-    int i = v;
-    if (i < vertices.size())
-        return &vertices.at(i);
+    if (v < vertices.size())
+        return &vertices.at(v);
     return nullptr;
 }
