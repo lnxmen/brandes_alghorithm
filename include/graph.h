@@ -4,43 +4,49 @@
 #include <vector>
 #include <map>
 
-template<typename T>
+using IDType = int;
+
 class Vertex {
-    T id_;
-    std::vector<T> edges_;
+
+    IDType id_;
+    std::vector<IDType> edges_;
 
 public:
 
-    Vertex(T id) : id_(id) {}
+    Vertex(IDType id) : id_(id) {}
 
-    void add_edge(Vertex<T> *v) { edges_.push_back(v->id_); }
+    void add_edge(Vertex *v) { edges_.push_back(v->id_); }
 
-    std::vector<T> get_edges() { return edges_; }
+    std::vector<IDType> get_edges() { return edges_; }
 
     bool has_edges() { return !edges_.empty(); }
 
-    T get_id() { return id_; }
+    IDType get_id() { return id_; }
 };
 
 
 template<typename T>
 class Graph {
-    std::map<T, Vertex<T>> vertices;
-    std::vector<T> vertices_ids;
+
+    IDType last_id = 0;
+    std::vector<Vertex> vertices;
+    std::map<T, IDType> vertices_ids;
 
 public:
 
-    Vertex<T> *get_vertex(T v);
+    Vertex *get_vertex(IDType v);
 
-    void add_vertex(T v);
+    IDType get_or_insert_vertex(T v);
 
     void connect(T v1, T v2);
 
-    std::vector<T> *get_vertexes_ids() { return &vertices_ids; };
+    std::vector<Vertex> *get_vertexes() { return &vertices; };
 
-    std::map<T, Vertex<T>> *get_vertexes() { return &vertices; };
+    std::map<T, IDType> *get_vertexes_id() { return &vertices_ids; };
 
-    bool vertex_exists(T v) { return vertices.find(v) != vertices.end(); }
+    IDType get_linked_ID(T v);
+
+    bool vertex_exists(T v);
 };
 
 template

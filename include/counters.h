@@ -7,18 +7,18 @@
 
 template<typename K, typename T, bool synchronized>
 class Counters {
-    std::unordered_map<K, T> counters;
+    std::vector<T> counters;
     std::mutex m;
 
 public:
 
     void initialize_values(Graph<K> &graph);
 
-    void increment(K k, T value);
+    void increment(IDType k, T value);
 
-    void batch_increment(std::unordered_map<K, T> &values);
+    void batch_increment(std::vector<T> &values);
 
-    std::unordered_map<K, T> &get_counters();
+    std::vector<T> &get_counters();
 };
 
 template // with synchronization

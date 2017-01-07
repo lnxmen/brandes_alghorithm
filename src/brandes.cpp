@@ -12,8 +12,10 @@ void Brandes<T, C>::run(int threads_number) {
     std::vector<std::thread> threads;
 
     // run workers
-    for (size_t i = 0; i < threads_number; i++)
+    for (size_t i = 0; i < threads_number-1; i++)
         threads.push_back(std::thread([this] { run_worker(); }));
+
+    run_worker();
 
     // wait for workers to end their jobs
     for (auto &thread : threads)
@@ -22,41 +24,42 @@ void Brandes<T, C>::run(int threads_number) {
 
 template<typename T, typename C>
 void Brandes<T, C>::run_worker() {
-    T *v = manager_.take_job();
+    IDType *v = manager_.take_job();
     Counters<T, C, false> counters_t;
     while (v != nullptr) {
+        // initialize counters
+        counters_t.initialize_values(graph_);
         // compute increments for current vertex
         compute(*v, &counters_t);
         // update global counters
         counters_.batch_increment(counters_t.get_counters());
-        // clear local counters
-        counters_t.initialize_values(graph_);
         // get next job (vertex)
         v = manager_.take_job();
     }
 }
 
 template<typename T, typename C>
-void Brandes<T, C>::compute(T s, Counters<T, C, false> *counters) {
-    std::stack<T> S;
-    std::unordered_map<T, std::vector<T>> previous_vertexes;
-    std::unordered_map<T, int> shortest_paths_counter;
-    std::unordered_map<T, int> distance;
-    std::unordered_map<T, double> betweenness;
+void Brandes<T, C>::compute(IDType s, Counters<T, C, false> *counters) {
+    std::stack<IDType> S;
+    std::vector<std::vector<IDType>> previous_vertexes;
+    std::vector<T> shortest_paths_counter;
+    std::vector<T> distance;
+    std::vector<C> betweenness;
 
-    for (T t : *graph_.get_vertexes_ids()) {
-        shortest_paths_counter[t] = 0;
-        distance[t] = -1;
-        betweenness[t] = 0;
+    for (Vertex &vertex : *graph_.get_vertexes()) {
+        shortest_paths_counter.emplace_back(0);
+        distance.emplace_back(-1);
+        betweenness.emplace_back(0);
+        previous_vertexes.emplace_back(std::vector<IDType>());
     }
 
     shortest_paths_counter[s] = 1;
     distance[s] = 0;
 
-    std::queue<T> Q;
+    std::queue<IDType> Q;
     Q.push(s);
 
-    T v;
+    IDType v;
     while (!Q.empty()) {
         v = Q.front();
         Q.pop();
@@ -87,12 +90,16 @@ void Brandes<T, C>::compute(T s, Counters<T, C, false> *counters) {
 
 template<typename T, typename C>
 std::map<T, C> Brandes<T, C>::get_result() {
-    std::unordered_map<T, C> counters = counters_.get_counters();
-    std::map<T, C> ordered(counters.begin(), counters.end());
+    std::map<T, IDType> *ids = graph_.get_vertexes_id();
+    std::vector<C> counters = counters_.get_counters();
+    std::map<T, C> ordered;
 
-    for (auto &kv : *graph_.get_vertexes()) {
-        if (!kv.second.has_edges())
-            ordered.erase(kv.first);
+    Vertex *v;
+    for (auto &kv : *ids) {
+        v = graph_.get_vertex(kv.second);
+        if (v->has_edges())
+            ordered[kv.first] = counters[kv.second];
     }
+
     return ordered;
 }

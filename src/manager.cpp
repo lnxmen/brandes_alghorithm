@@ -6,8 +6,9 @@ template<typename T>
 void Manager<T>::add_jobs(Graph<T> &graph) {
     std::lock_guard<std::mutex> lock(mutex_);
 
-    for (T k : *graph.get_vertexes_ids())
-        jobs_.push(k);
+    for (Vertex &v : *graph.get_vertexes()) {
+        jobs_.push(v.get_id());
+    }
 }
 
 template<typename T>

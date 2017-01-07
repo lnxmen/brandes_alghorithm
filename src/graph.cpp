@@ -1,27 +1,38 @@
 #include "graph.h"
 
 template<typename T>
-void Graph<T>::add_vertex(T v) {
-    vertices.insert(std::pair<T, Vertex<T>>(v, Vertex<T>(v)));
-    vertices_ids.push_back(v);
+IDType Graph<T>::get_or_insert_vertex(T v) {
+    IDType id = get_linked_ID(v);
+    if (id > 0)
+        return id;
+    id = last_id++;
+    vertices.emplace_back(Vertex(id));
+    vertices_ids.insert(std::pair<T, IDType>(v, id));
+    return id;
+}
+
+template<typename T>
+IDType Graph<T>::get_linked_ID(T v) {
+    auto it = vertices_ids.find(v);
+    if (it == vertices_ids.end())
+        return 0;
+    return (*it).second;
 }
 
 template<typename T>
 void Graph<T>::connect(T v1, T v2) {
-    if (!vertex_exists(v1))
-        add_vertex(v1);
-    if (!vertex_exists(v2))
-        add_vertex(v2);
-
-    auto v = &vertices.find(v1)->second;
-    auto w = get_vertex(v2);
+    IDType i1, i2;
+    i1 = get_or_insert_vertex(v1);
+    i2 = get_or_insert_vertex(v2);
+    Vertex *v = get_vertex(i1);
+    Vertex *w = get_vertex(i2);
     v->add_edge(w);
 }
 
 template<typename T>
-Vertex<T> *Graph<T>::get_vertex(T v) {
-    auto it = vertices.find(v);
-    if (it == vertices.end())
-        return nullptr;
-    return &it->second;
+Vertex *Graph<T>::get_vertex(IDType v) {
+    int i = v;
+    if (i < vertices.size())
+        return &vertices.at(i);
+    return nullptr;
 }
