@@ -7,6 +7,7 @@
 
 template<typename K, typename T, bool synchronized>
 class Counters {
+
     std::vector<T> counters;
     std::mutex m;
 
@@ -19,6 +20,7 @@ public:
     void batch_increment(std::vector<T> &values);
 
     std::vector<T> &get_counters();
+
 };
 
 template // with synchronization

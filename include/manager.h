@@ -7,6 +7,7 @@
 
 template<typename T>
 class Manager {
+
     std::queue<T> jobs_;
     std::mutex mutex_;
 

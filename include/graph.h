@@ -22,6 +22,7 @@ public:
     bool has_edges() { return !edges_.empty(); }
 
     IDType get_id() { return id_; }
+
 };
 
 
@@ -47,6 +48,7 @@ public:
     IDType get_linked_ID(T v);
 
     bool vertex_exists(T v);
+
 };
 
 template
