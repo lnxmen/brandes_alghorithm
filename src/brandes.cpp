@@ -39,51 +39,49 @@ void Brandes<T, C>::run_worker() {
 }
 
 template<typename T, typename C>
-void Brandes<T, C>::compute(IDType s, Counters<T, C, false> *counters) {
+void Brandes<T, C>::compute(IDType vertex_id, Counters<T, C, false> *counters) {
     std::stack<IDType> S;
-    std::vector<std::vector<IDType>> previous_vertexes;
-    std::vector<T> shortest_paths_counter;
-    std::vector<T> distance;
-    std::vector<C> betweenness;
+    std::vector<std::vector<IDType>> P;
+    std::vector<T> sigma;
+    std::vector<T> d;
+    std::vector<C> delta;
 
     for (Vertex &vertex : *graph_.get_vertexes()) {
-        shortest_paths_counter.emplace_back(0);
-        distance.emplace_back(-1);
-        betweenness.emplace_back(0);
-        previous_vertexes.emplace_back(std::vector<IDType>());
+        sigma.emplace_back(0);
+        d.emplace_back(-1);
+        delta.emplace_back(0);
+        P.emplace_back(std::vector<IDType>());
     }
 
-    shortest_paths_counter[s] = 1;
-    distance[s] = 0;
+    sigma[vertex_id] = 1;
+    d[vertex_id] = 0;
 
     std::queue<IDType> Q;
-    Q.push(s);
+    Q.push(vertex_id);
 
     IDType v;
     while (!Q.empty()) {
-        v = Q.front();
-        Q.pop();
+        v = Q.front(); Q.pop();
         S.push(v);
 
-        for (T w : graph_.get_vertex(v)->get_edges()) {
-            if (distance[w] < 0) {
+        for (IDType w : graph_.get_vertex(v)->get_edges()) {
+            if (d[w] < 0) {
                 Q.push(w);
-                distance[w] = distance[v] + 1;
+                d[w] = d[v] + 1;
             }
-            if (distance[w] == distance[v] + 1) {
-                shortest_paths_counter[w] += shortest_paths_counter[v];
-                previous_vertexes[w].push_back(v);
+            if (d[w] == d[v] + 1) {
+                sigma[w] += sigma[v];
+                P[w].emplace_back(v);
             }
         }
     }
 
     while (!S.empty()) {
-        v = S.top();
-        S.pop();
-        for (T p : previous_vertexes[v])
-            betweenness[p] += (C(shortest_paths_counter[p]) / shortest_paths_counter[v]) * (1.0 + betweenness[v]);
-        if (v != s)
-            counters->increment(v, betweenness[v]);
+        v = S.top(); S.pop();
+        for (IDType p : P[v])
+            delta[p] += (C(sigma[p]) / sigma[v]) * (1.0 + delta[v]);
+        if (v != vertex_id)
+            counters->increment(v, delta[v]);
     }
 
 }
