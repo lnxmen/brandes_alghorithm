@@ -64,7 +64,7 @@ void Brandes<T, C>::compute(IDType vertex_id, Counters<T, C, false> *counters) {
         v = Q.front(); Q.pop();
         S.push(v);
 
-        for (IDType w : graph_.get_vertex(v)->get_edges()) {
+        for (IDType w : *graph_.get_vertex(v)->get_edges()) {
             if (d[w] < 0) {
                 Q.push(w);
                 d[w] = d[v] + 1;

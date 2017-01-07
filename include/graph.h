@@ -15,9 +15,9 @@ public:
 
     Vertex(IDType id) : id_(id) {}
 
-    void add_edge(Vertex *v) { edges_.push_back(v->id_); }
+    void add_edge(Vertex *v) { edges_.emplace_back(v->get_id()); }
 
-    std::vector<IDType> get_edges() { return edges_; }
+    std::vector<IDType> *get_edges() { return &edges_; }
 
     bool has_edges() { return !edges_.empty(); }
 

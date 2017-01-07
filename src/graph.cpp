@@ -3,7 +3,7 @@
 template<typename T>
 IDType Graph<T>::get_or_insert_vertex(T v) {
     IDType id = get_linked_ID(v);
-    if (id > 0)
+    if (id >= 0)
         return id;
     id = last_id++;
     vertices.emplace_back(Vertex(id));
@@ -15,7 +15,7 @@ template<typename T>
 IDType Graph<T>::get_linked_ID(T v) {
     auto it = vertices_ids.find(v);
     if (it == vertices_ids.end())
-        return 0;
+        return -1;
     return (*it).second;
 }
 
