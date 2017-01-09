@@ -26,16 +26,16 @@ template<typename T, typename C>
 void Brandes<T, C>::run_worker() {
     IDType v = manager_.take_job();
     Counters<T, C, false> counters_t;
+    // initialize counters
+    counters_t.initialize_values(graph_);
     while (v > -1) {
-        // initialize counters
-        counters_t.initialize_values(graph_);
         // compute increments for current vertex
         compute(v, &counters_t);
-        // update global counters
-        counters_.batch_increment(counters_t.get_counters());
         // get next job (vertex)
         v = manager_.take_job();
     }
+    // update global counters
+    counters_.batch_increment(counters_t.get_counters());
 }
 
 template<typename T, typename C>
